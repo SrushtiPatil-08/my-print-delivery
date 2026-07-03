@@ -5,6 +5,8 @@ import {
   Upload, Settings2, Truck, Clock, Wallet, Sparkles, ShieldCheck, ArrowRight, Quote, Star,
   BadgeCheck, MapPin, FileText, Lock, Trash2, Files, Printer,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchProducts, type Product } from "@/lib/db";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,6 +19,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => { fetchProducts(6).then(setProducts); }, []);
   return (
     <SiteLayout>
       {/* HERO */}
@@ -190,6 +194,39 @@ function Home() {
           ))}
         </div>
       </section>
+
+      {/* FEATURED PRODUCTS (from Supabase) */}
+      {products.length > 0 && (
+        <section className="container mx-auto px-4 max-w-7xl section-pad">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl md:text-5xl font-bold mb-3">Popular print packages</h2>
+            <p className="text-muted-foreground text-lg">Ready-to-order bundles curated for students.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map(p => (
+              <div key={p.id} className="card-elevated overflow-hidden group hover:shadow-glow transition-all">
+                {p.image_url ? (
+                  <img src={p.image_url} alt={p.name} className="w-full h-40 object-cover" loading="lazy" />
+                ) : (
+                  <div className="w-full h-40 flex items-center justify-center bg-secondary text-muted-foreground">
+                    <FileText className="w-10 h-10" />
+                  </div>
+                )}
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <h3 className="font-semibold">{p.name}</h3>
+                    <div className="text-primary font-bold shrink-0">₹{p.price}</div>
+                  </div>
+                  {p.description && <p className="text-sm text-muted-foreground line-clamp-2">{p.description}</p>}
+                  <Button asChild size="sm" className="mt-4 w-full">
+                    <Link to="/order">Order this</Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="container mx-auto px-4 max-w-7xl section-pad">

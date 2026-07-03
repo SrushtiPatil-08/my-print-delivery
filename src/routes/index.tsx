@@ -5,6 +5,8 @@ import {
   Upload, Settings2, Truck, Clock, Wallet, Sparkles, ShieldCheck, ArrowRight, Quote, Star,
   BadgeCheck, MapPin, FileText, Lock, Trash2, Files, Printer,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchProducts, type Product } from "@/lib/db";
 
 export const Route = createFileRoute("/")({
   head: () => ({

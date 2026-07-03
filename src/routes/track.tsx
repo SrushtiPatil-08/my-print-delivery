@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { getOrder, STATUSES, type Order } from "@/lib/order-store";
-import { fetchOrderRemote } from "@/lib/db";
 import { Check, Package, Search, Clock, MapPin } from "lucide-react";
 import { z } from "zod";
 
@@ -22,37 +21,17 @@ function TrackPage() {
   const [order, setOrder] = useState<Order | undefined>();
   const [searched, setSearched] = useState(false);
 
-  const lookup = async (id: string) => {
-    const local = getOrder(id);
-    if (local) { setOrder(local); setSearched(true); return; }
-    const remote = await fetchOrderRemote(id);
-    setSearched(true);
-    if (!remote) { setOrder(undefined); return; }
-    // Adapt remote row into the local Order shape (minimal fields for the timeline).
-    const firstItem = Array.isArray(remote.order_items) ? remote.order_items[0] : null;
-    setOrder({
-      id: remote.notes ?? id,
-      createdAt: remote.created_at,
-      total: Number(remote.total ?? 0),
-      status: "Order Confirmed",
-      options: {
-        fileName: firstItem?.file_name ?? "Your document",
-        pages: firstItem?.pages ?? 0, copies: firstItem?.copies ?? 1,
-        color: firstItem?.color ? "color" : "bw",
-        sided: "single", size: "A4", finishing: "none", urgent: false,
-      },
-      delivery: {
-        fullName: remote.customer_name ?? "", institute: "", department: "",
-        phone: "", address: remote.delivery_address ?? "", time: "Anytime",
-      },
-    } as Order);
-  };
-
-  useEffect(() => { if (search.id) lookup(search.id); }, [search.id]);
+  useEffect(() => {
+    if (search.id) {
+      setOrder(getOrder(search.id));
+      setSearched(true);
+    }
+  }, [search.id]);
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    lookup(query.trim());
+    setOrder(getOrder(query.trim()));
+    setSearched(true);
   };
 
   return (

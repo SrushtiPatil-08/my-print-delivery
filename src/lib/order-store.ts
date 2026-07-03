@@ -214,8 +214,6 @@ export function placeOrder(options: PrintOptions, delivery: DeliveryDetails): Or
   const list = getOrders();
   list.unshift(order);
   localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
-  // Fire-and-forget mirror to Supabase (guest-checkout insert allowed by RLS).
-  import("@/lib/db").then(m => m.saveOrderRemote(order)).catch(() => {});
   return order;
 }
 

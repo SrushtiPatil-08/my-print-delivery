@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { getOrder, STATUSES, type Order } from "@/lib/order-store";
+import { fetchOrderRemote } from "@/lib/db";
 import { Check, Package, Search, Clock, MapPin } from "lucide-react";
 import { z } from "zod";
 

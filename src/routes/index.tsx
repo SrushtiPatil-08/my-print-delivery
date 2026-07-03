@@ -19,6 +19,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => { fetchProducts(6).then(setProducts); }, []);
   return (
     <SiteLayout>
       {/* HERO */}

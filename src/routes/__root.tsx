@@ -115,6 +115,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    import("@/lib/analytics").then((m) => m.initAnalytics());
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />

@@ -92,10 +92,25 @@ create table if not exists public.orders (
   delivery_fee      numeric(10,2) not null default 0 check (delivery_fee >= 0),
   total             numeric(10,2) not null default 0 check (total >= 0),
   status            public.order_status not null default 'pending',
+  courier_lat       double precision,
+  courier_lng       double precision,
+  courier_updated_at timestamptz,
+  estimated_arrival timestamptz,
   notes             text,
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );
+
+-- Enable Supabase Realtime on orders so the Live Tracking Map updates
+-- instantly when status / courier coordinates change.
+do $$ begin
+  perform 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'orders';
+  if not found then
+    execute 'alter publication supabase_realtime add table public.orders';
+  end if;
+end $$;
+alter table public.orders replica identity full;
 
 create index if not exists orders_user_id_idx    on public.orders(user_id);
 create index if not exists orders_status_idx     on public.orders(status);

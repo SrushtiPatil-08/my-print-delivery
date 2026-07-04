@@ -6,12 +6,13 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import type { ReactNode } from "react";
 
-const NAV = [
+type NavItem = { to: string; label: string; icon: any; exact?: boolean };
+const NAV: NavItem[] = [
   { to: "/dashboard", label: "Overview", icon: LayoutGrid, exact: true },
   { to: "/dashboard/orders", label: "My Orders", icon: Package },
   { to: "/dashboard/history", label: "Order History", icon: History },
   { to: "/dashboard/profile", label: "Profile", icon: User },
-] as const;
+];
 
 export function DashboardShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();

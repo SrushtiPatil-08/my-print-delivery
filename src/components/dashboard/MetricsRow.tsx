@@ -77,7 +77,7 @@ export function MetricsRow({
           </div>
           {m.action && (
             <Link
-              to={m.action.to}
+              to={m.action.to as any}
               className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
             >
               {m.action.label}
